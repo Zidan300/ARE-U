@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Party Game',
+      title: 'ARE-U',
       debugShowCheckedModeBanner: false, // Hides the debug banner
       theme: ThemeData(
         brightness: Brightness.dark,
