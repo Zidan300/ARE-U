@@ -1,16 +1,38 @@
-import 'package:appcomplication_app/screens/player_selection_screen.dart';
-import 'package:appcomplication_app/widgets/custom_button.dart';
+import 'package:appcomplication_app/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../widgets/custom_button.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-  void _navigateToPlayerSelection(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const PlayerSelectionScreen()),
-    );
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _isLoading = false;
+
+  // A single method to handle all sign-in logic.
+  // It shows a loading indicator and displays errors.
+  Future<void> _signIn(Future<void> Function() signInMethod) async {
+    if (_isLoading) return; // Prevent multiple taps
+    setState(() { _isLoading = true; });
+
+    try {
+      await signInMethod();
+      // On success, the AuthWrapper will handle navigation.
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
+    }
   }
 
   @override
@@ -26,44 +48,32 @@ class LoginScreen extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 150), // Add space at the top
-                const Text(
-                  'Party Game!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+        child: Center(
+          child: _isLoading
+              ? const CircularProgressIndicator(color: Colors.white)
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/icon/app_logo.png', height: 150),
+                      const SizedBox(height: 60),
+                      CustomButton(
+                        text: 'Sign in with Google',
+                        icon: FontAwesomeIcons.google,
+                        onPressed: () => _signIn(AuthService.signInWithGoogle),
+                      ),
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () => _signIn(AuthService.signInAnonymously),
+                        child: const Text(
+                          'Play as a Guest',
+                          style: TextStyle(color: Colors.white, fontSize: 16, decoration: TextDecoration.underline, decorationColor: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 80),
-                CustomButton(
-                  text: 'Sign in with Google',
-                  icon: FontAwesomeIcons.google,
-                  onPressed: () => _navigateToPlayerSelection(context),
-                ),
-                const SizedBox(height: 20),
-                CustomButton(
-                  text: 'Sign in with Facebook',
-                  icon: FontAwesomeIcons.facebook,
-                  onPressed: () => _navigateToPlayerSelection(context),
-                ),
-                const SizedBox(height: 20),
-                CustomButton(
-                  text: 'Sign in with GitHub',
-                  icon: FontAwesomeIcons.github,
-                  onPressed: () => _navigateToPlayerSelection(context),
-                ),
-                const SizedBox(height: 100), // Add space at the bottom
-              ],
-            ),
-          ),
         ),
       ),
     );

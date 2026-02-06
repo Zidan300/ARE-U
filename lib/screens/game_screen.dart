@@ -28,7 +28,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool _isTimerRunning = false;
   bool _timeUp = false;
 
-  // Animation Controllers
   late AnimationController _timerPulseController;
 
   @override
@@ -40,19 +39,20 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _startNewRound() {
-    // Play a sound for the new round
     SoundService.playSfx('audio/swoosh.mp3');
 
     final random = Random();
     final players = List<String>.from(widget.playerNames)..shuffle(random);
 
-    setState(() {
-      _performer = players[0];
-      _guesser = players[1];
-      _suggester = players[2];
-      _cardType = _cardTypes[random.nextInt(_cardTypes.length)];
-      _resetTimer();
-    });
+    if (mounted) {
+      setState(() {
+        _performer = players[0];
+        _guesser = players[1];
+        _suggester = players[2];
+        _cardType = _cardTypes[random.nextInt(_cardTypes.length)];
+        _resetTimer();
+      });
+    }
   }
 
   void _startTimer() {
@@ -73,7 +73,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           _isTimerRunning = false;
           if (!_timeUp) {
             _timeUp = true;
-            SoundService.playSiren(); // Use the sound service
+            SoundService.playSiren();
           }
         }
       });
@@ -82,7 +82,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void _resetTimer() {
     _timer?.cancel();
-    SoundService.stopSiren(); // Use the sound service
+    SoundService.stopSiren();
     _isTimerRunning = false;
     _timeUp = false;
     _countdown = _initialTime;
@@ -92,24 +92,34 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void dispose() {
     _timer?.cancel();
     _timerPulseController.dispose();
-    SoundService.stopSiren(); // Ensure siren is stopped when leaving screen
+    SoundService.stopSiren();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Theme.of(context).primaryColor, Colors.black],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Theme.of(context).primaryColor, Colors.black],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: const Text('Game Round'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        child: SafeArea(
+        body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 24.0),
             child: Column(
               children: [
                 _buildPlayerRoles(),
