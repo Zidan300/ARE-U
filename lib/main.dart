@@ -1,8 +1,12 @@
-
 import 'package:appcomplication_app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
+  // Ensure Flutter framework is properly initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
