@@ -1,4 +1,3 @@
-import 'package:appcomplication_app/auth_service.dart';
 import 'package:appcomplication_app/screens/game_screen.dart';
 import 'package:appcomplication_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +56,6 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
       return;
     }
 
-    // The GameScreen is now responsible for starting its own music.
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => GameScreen(playerNames: playerNames)),
@@ -68,18 +66,10 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Set Up Game'),
+        title: const Text('ARE-U - Set Up Game'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () async {
-              await AuthService.signOut();
-            },
-            tooltip: 'Sign Out',
-          ),
-        ],
+        automaticallyImplyLeading: false, // Removes the back button
       ),
       body: Container(
         decoration: BoxDecoration(
