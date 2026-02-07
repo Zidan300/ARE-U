@@ -56,6 +56,8 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
       );
       return;
     }
+
+    // The GameScreen is now responsible for starting its own music.
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => GameScreen(playerNames: playerNames)),
@@ -74,7 +76,6 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () async {
               await AuthService.signOut();
-              // The AuthWrapper will handle navigation back to the login screen.
             },
             tooltip: 'Sign Out',
           ),

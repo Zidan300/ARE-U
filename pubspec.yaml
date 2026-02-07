@@ -1,5 +1,5 @@
 name: appcomplication_app
-description: "A new Flutter project."
+description: "ARE-U - A fun party game."
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -21,6 +21,7 @@ dependencies:
   
   # Package for social media icons
   font_awesome_flutter: ^10.7.0
+  
   # Package for playing audio
   audioplayers: ^6.0.0
 
@@ -32,13 +33,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
   assets:
     - assets/audio/
     - assets/icon/
 
-
 # Correct configuration for the flutter_launcher_icons package
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icon/app_logo.png"
