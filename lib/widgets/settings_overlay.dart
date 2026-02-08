@@ -41,7 +41,7 @@ class _SettingsOverlayState extends State<SettingsOverlay> {
     return GestureDetector(
       onTap: widget.onClose,
       child: Container(
-        color: Colors.black.withOpacity(0.6),
+        color: Colors.black.withValues(alpha: 0.6),
         child: Center(
           child: Material(
             color: Colors.transparent,

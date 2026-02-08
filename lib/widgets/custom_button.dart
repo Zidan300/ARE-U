@@ -18,7 +18,7 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: () {
         // Play the click sound and then execute the original function
-        SoundService.playSfx('audio/click.mp3');
+        SoundService.playSfx('audio/swoosh.mp3');
         onPressed();
       },
       icon: icon != null ? Icon(icon, size: 24.0) : const SizedBox.shrink(),

@@ -1,8 +1,8 @@
 import 'package:appcomplication_app/screens/player_selection_screen.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  // No Firebase initialization needed. The app starts directly.
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white, fontSize: 16)),
         useMaterial3: true,
       ),
-      // The app now starts directly at the Player Selection Screen.
+      // Direct access to player selection screen, bypassing login
       home: const PlayerSelectionScreen(),
     );
   }

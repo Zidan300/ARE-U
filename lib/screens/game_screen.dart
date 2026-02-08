@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:appcomplication_app/utils/sound_service.dart';
 import 'package:appcomplication_app/widgets/card_flip_widget.dart';
 import 'package:appcomplication_app/widgets/settings_overlay.dart';
-import 'package:appcomplication_app/widgets/shiny_card_widget.dart'; // Import the new widget
+import 'package:appcomplication_app/widgets/game_card_widget.dart'; // Import the new widget
 import 'package:flutter/material.dart';
 
 class GameScreen extends StatefulWidget {
@@ -198,7 +198,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       controller: _cardFlipController,
       front: const Card(color: Colors.blueGrey, child: SizedBox(width: 200, height: 250)),
       // The back of the card now uses the new ShinyCardWidget
-      back: ShinyCardWidget(cardType: _cardType ?? ''),
+      back: GameCardWidget(cardType: _cardType ?? ''),
     );
   }
   
@@ -211,17 +211,30 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   Widget _buildTimerWidget() {
     bool isPanic = _countdown <= 10 && _isTimerRunning;
-    return AnimatedDefaultTextStyle(
-      duration: const Duration(milliseconds: 300),
-      style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: isPanic ? Colors.redAccent : Colors.white),
-      child: AnimatedBuilder(
-        animation: _panicShakeController,
-        builder: (context, child) {
-          final shakeValue = isPanic ? sin(_panicShakeController.value * 2 * pi) * 4.0 : 0.0;
-          final scaleValue = isPanic ? 1.0 + (_panicShakeController.value * 0.05) : 1.0;
-          return Transform(alignment: Alignment.center, transform: Matrix4.identity()..translate(shakeValue)..scale(scaleValue), child: child);
-        },
-        child: Text('0:${_countdown.toString().padLeft(2, '0')}'),
+    return Container(
+      width: double.infinity,
+      height: 80.0, // Dedicate fixed height for the timer so it doesn't shrink to zero
+      alignment: Alignment.center,
+      child: FittedBox(
+        fit: BoxFit.contain, // Scale the text to fit within the container
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 300),
+          style: TextStyle(
+            fontSize: 60, 
+            fontWeight: FontWeight.bold, 
+            color: isPanic ? Colors.redAccent : Colors.white,
+            shadows: [Shadow(blurRadius: 10, color: Colors.black.withValues(alpha: 0.5))], // Enhance visibility against background
+          ),
+          child: AnimatedBuilder(
+            animation: _panicShakeController,
+            builder: (context, child) {
+              final shakeValue = isPanic ? sin(_panicShakeController.value * 2 * pi) * 4.0 : 0.0;
+              final scaleValue = isPanic ? 1.0 + (_panicShakeController.value * 0.05) : 1.0;
+              return Transform(alignment: Alignment.center, transform: Matrix4.identity()..translateByDouble(shakeValue, 0, 0, 0)..scaleByDouble(scaleValue, scaleValue, scaleValue, 1.0), child: child);
+            },
+            child: Text('0:${_countdown.toString().padLeft(2, '0')}'),
+          ),
+        ),
       ),
     );
   }
@@ -231,7 +244,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(onPressed: _isTimerRunning ? null : _startTimer, style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 18), textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), child: const Text('Start')),
-        ElevatedButton(onPressed: () => _startNewRound(), style: ElevatedButton.styleFrom(backgroundColor: Colors.white.withOpacity(0.2), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18), textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), child: const Text('Restart')),
+        ElevatedButton(onPressed: () => _startNewRound(), style: ElevatedButton.styleFrom(backgroundColor: Colors.white.withValues(alpha: 0.2), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18), textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), child: const Text('Restart')),
       ],
     );
   }

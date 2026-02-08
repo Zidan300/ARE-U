@@ -2,6 +2,8 @@ import 'package:appcomplication_app/screens/game_screen.dart';
 import 'package:appcomplication_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 
+// NOTE: All Firebase and authentication-related imports and logic have been removed.
+
 class PlayerSelectionScreen extends StatefulWidget {
   const PlayerSelectionScreen({super.key});
 
@@ -19,16 +21,25 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
     _nameControllers = List.generate(_playerCount, (_) => TextEditingController());
   }
 
+  // BUG FIX: Simplified and robust logic for handling player count changes.
   void _setPlayerCount(int count) {
     if (count == _playerCount) return;
+
     setState(() {
+      // If we are removing players, dispose and remove the extra controllers.
       if (count < _playerCount) {
-        for (int i = count; i < _playerCount; i++) {
+        for (int i = _playerCount - 1; i >= count; i--) {
           _nameControllers[i].dispose();
+          _nameControllers.removeAt(i);
+        }
+      } 
+      // If we are adding players, simply add new controllers.
+      else {
+        for (int i = _playerCount; i < count; i++) {
+          _nameControllers.add(TextEditingController());
         }
       }
       _playerCount = count;
-      _nameControllers = List.generate(_playerCount, (i) => _nameControllers.length > i ? _nameControllers[i] : TextEditingController());
     });
   }
 
@@ -69,7 +80,9 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
         title: const Text('ARE-U - Set Up Game'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false, // Removes the back button
+        automaticallyImplyLeading: false, // Prevents a back button from appearing.
+        // BUG FIX: Removed the actions button that relied on Firebase auth.
+        actions: const [],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -98,7 +111,7 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
                         child: TextField(
                           controller: _nameControllers[index],
                           style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(labelText: 'Player ${index + 1}', labelStyle: TextStyle(color: Colors.white.withOpacity(0.7)), filled: true, fillColor: Colors.white.withOpacity(0.1), border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2))),
+                          decoration: InputDecoration(labelText: 'Player ${index + 1}', labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)), filled: true, fillColor: Colors.white.withValues(alpha: 0.1), border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2))),
                         ),
                       );
                     },
@@ -127,7 +140,7 @@ class _PlayerSelectionScreenState extends State<PlayerSelectionScreen> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: 50, height: 50,
-            decoration: BoxDecoration(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white.withOpacity(0.2), shape: BoxShape.circle, border: isSelected ? Border.all(color: Colors.white, width: 2) : null),
+            decoration: BoxDecoration(color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle, border: isSelected ? Border.all(color: Colors.white, width: 2) : null),
             child: Center(child: Text('$count', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isSelected ? Colors.black : Colors.white))),
           ),
         );

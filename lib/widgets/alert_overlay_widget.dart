@@ -14,7 +14,7 @@ class AlertOverlayWidget extends StatelessWidget {
           return Container(
             // The opacity is animated from 0.0 (fully transparent) to 0.3 (semi-transparent red)
             // and then back to 0.0, creating a pulsing effect.
-            color: Colors.red.withOpacity(controller.value * 0.3),
+            color: Colors.red.withValues(alpha: controller.value * 0.3),
           );
         },
       ),
